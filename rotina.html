@@ -193,6 +193,35 @@
       display: none;
     }
 
+
+
+/* ✅ Lista de tarefas – ações à direita ( + ✏️ ⊘ ↺ ) */
+.tasks-item {
+  padding: 0.2rem 0.15rem;
+  border-radius: 10px;
+}
+.tasks-line{
+  display:flex;
+  align-items:flex-start;
+  gap:0.4rem;
+  width:100%;
+}
+.tasks-line .task-left{
+  flex:1;
+  min-width:0;
+  display:flex;
+  align-items:flex-start;
+  gap:0.35rem;
+}
+.tasks-line .task-actions{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:0.15rem;
+  flex-shrink:0;
+  white-space:nowrap;
+}
+
     input[type="checkbox"] {
       width: 15px;
       height: 15px;
@@ -601,7 +630,136 @@
   background: var(--pill-bg);
 }
 
-  </style>
+  
+
+/* === UI Pills (ações x seleção) === */
+
+:root{
+  --ui-accent: #4b7bec;
+  --ui-soft: #eef2ff;
+  --ui-shadow: 0 10px 26px rgba(0,0,0,.12);
+  --ui-shadow-sm: 0 8px 18px rgba(0,0,0,.12);
+}
+
+/* =========================
+   AÇÕES (clique único)
+   Ex.: Início / Backup / Restaurar / Atualizar
+========================= */
+.btn-pill, .pill-btn, .action-pill{
+  background:#fff;
+  border:2px solid var(--ui-accent);
+  color:var(--ui-accent);
+  border-radius:9999px;
+  padding:10px 14px;
+  font-weight:600;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+  white-space:nowrap;
+  line-height:1;
+}
+
+.btn-pill .icon, .pill-btn .icon, .action-pill .icon{
+  font-size:18px;
+  line-height:1;
+}
+
+.btn-pill:hover, .pill-btn:hover, .action-pill:hover{
+  background:var(--ui-soft);
+}
+.btn-pill:active, .pill-btn:active, .action-pill:active{
+  transform: translateY(1px);
+}
+
+/* Layout das barras de ações (mantém tudo na mesma linha) */
+.header-actions, .top-actions.nav-row, .action-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:nowrap;
+}
+.header-actions > button, .top-actions.nav-row > button, .action-row > button{
+  flex:1 1 0;
+  min-width:0;
+}
+@media (max-width:420px){
+  .btn-pill, .pill-btn, .action-pill{ padding:9px 10px; gap:6px; }
+}
+
+/* =========================
+   SELEÇÃO (botões selecionáveis)
+   Ex.: Alta/Baixa; Casa/Viagem/Find/Pausa; abas Sugestões/Receitas/Dia/Resumo/Compras
+========================= */
+.pill-group, .tabs, .segmented{
+  background:var(--ui-soft);
+  border-radius:9999px;
+  padding:8px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  justify-content:space-between;
+  box-shadow: var(--ui-shadow);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* botões dentro dos grupos */
+.chip, .tab-btn, .seg-btn{
+  border:none;
+  background:transparent;
+  color: var(--text-muted, var(--muted, #666));
+  border-radius:9999px;
+  padding:10px 12px;
+  font-weight:600;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  cursor:pointer;
+  user-select:none;
+  white-space:nowrap;
+  min-width:0;
+  line-height:1;
+}
+
+/* selecionado */
+.chip.active, .tab-btn.active, .seg-btn.active{
+  background:#fff;
+  color:var(--ui-accent);
+  box-shadow: var(--ui-shadow-sm);
+}
+
+/* variação "pausa"/perigo */
+.chip.danger{ color: var(--danger, #eb3b5a); }
+.chip.danger.active{ color: var(--danger, #eb3b5a); }
+
+/* Tabs do Cardápio em 2 linhas: 3 em cima, 2 embaixo */
+.tabs{
+  flex-wrap:wrap;
+  width:100%;
+}
+.tabs .tab-btn{
+  flex:1 1 calc(33.333% - 8px);
+}
+.tabs .tab-btn:nth-child(n+4){
+  flex-basis: calc(50% - 8px);
+}
+@media (max-width:360px){
+  .tabs .tab-btn{ padding:9px 10px; }
+}
+
+
+/* Se a tela for estreita demais, encurta sem quebrar a linha */
+.btn-pill, .pill-btn, .action-pill{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+</style>
 </head>
 
 
@@ -640,7 +798,7 @@
 
       <div class="pill-group chip-group" id="energyChips">
         <button type="button" class="chip active" data-energy="alta">🔋 Alta</button>
-        <button type="button" class="chip" data-energy="baixa">💧 Baixa</button>
+        <button type="button" class="chip" data-energy="baixa">🪫 Baixa</button>
       </div>
 
       <div class="pill-group chip-group" id="contextChips">
@@ -725,7 +883,7 @@
       <div class="card-header flex-between">
         <h2>📚 Histórico de ciclos</h2>
         <div class="flex" style="gap: .4rem;">
-          <button type="button" class="btn-small btn-outline" id="btnRestartCycle">
+          <button type="button" class="btn-small btn-outline" id="btnRestartCycle" onclick="restartCycle()">
             🌀 Reiniciar ciclo
           </button>
           <button type="button" class="btn-small" id="btnDownloadCycleHistory">
@@ -2815,9 +2973,7 @@ if (ctx === "find") {
 
         // ESQUERDA: checkbox + nome
         const left = document.createElement("div");
-        left.style.display = "flex";
-        left.style.alignItems = "center";
-        left.style.gap = "0.35rem";
+      left.className = "task-left";
 
         const chk = document.createElement("input");
         chk.type = "checkbox";
@@ -2857,10 +3013,7 @@ if (ctx === "find") {
 
         // DIREITA: botões +, ✏️, ⊘, ↺
         const right = document.createElement("div");
-        right.style.display = "flex";
-        right.style.alignItems = "center";
-        right.style.gap = "0.25rem";
-        right.style.marginLeft = "auto";
+        right.className = "task-actions";
 
         // Só mostra o + se houver instruções
         if (instrText) {
@@ -2970,9 +3123,7 @@ renderCycleHistoryBlock();
 
     // Esquerda: checkbox + texto
     const left = document.createElement("div");
-    left.style.display = "flex";
-    left.style.alignItems = "center";
-    left.style.gap = "0.35rem";
+      left.className = "task-left";
     left.style.flex = "1";
 
     const chk = document.createElement("input");
@@ -3019,9 +3170,7 @@ label.textContent = item.name || item.nome || "Tarefa reagendada";
 
     // Direita: botão remover
     const actions = document.createElement("div");
-    actions.style.display = "flex";
-    actions.style.alignItems = "center";
-    actions.style.gap = "0.25rem";
+    actions.className = "task-actions";
 
     const btnDel = document.createElement("button");
     btnDel.type = "button";
@@ -3427,10 +3576,7 @@ function downloadCycleHistoryTxt(){
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }
-
-    if(btnRestartCycle){
-      btnRestartCycle.addEventListener("click", restartCycle);
-    }
+    // btnRestartCycle usa onclick no HTML (mais robusto no mobile)
     if(btnDownloadCycleHistory){
       btnDownloadCycleHistory.addEventListener("click", downloadCycleHistoryTxt);
     }
