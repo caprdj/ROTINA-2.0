@@ -7,9 +7,9 @@ const OFFLINE_URLS = [
   "rotina.html",
   "cardapio.html",
   "inventario.html",
-  "manifest.json"
-  // Se tiver ícones tipo icon-192.png, icon-512.png etc,
-  // acrescente aqui: "icon-192.png", "icon-512.png", ...
+  "manifest.json",
+  "icon-192.png", 
+  "icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
@@ -46,3 +46,4 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
