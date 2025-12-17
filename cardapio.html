@@ -605,6 +605,59 @@
     }
     .pill-btn .icon{font-size:0.9em; line-height:1;}
 
+    /* =========================
+       MOBILE (celular) — ajustes de botões
+       ========================= */
+    @media (max-width: 640px) {
+      /* Top actions (🏠 Início / 📤 Backup / 📥 Restaurar) — sempre na mesma linha */
+      .top-actions.nav-row { 
+        flex-wrap: nowrap;
+        gap: 8px;
+        width: 100%;
+      }
+      .top-actions.nav-row .pill-btn.main{
+        flex: 1 1 0;
+        min-width: 0;
+        justify-content: center;
+        padding: 10px 10px;
+        gap: 6px;
+        font-size: 0.88rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .top-actions.nav-row .pill-btn.icon-only{
+        flex: 0 0 auto;
+        width: 44px;
+        min-width: 44px;
+        padding: 10px 0;
+        justify-content: center;
+      }
+
+      /* Tabs (Sugestões / Receitas / Dia / Resumo / Lista) — 2 linhas, sem rolagem horizontal */
+      .tabs{
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.5rem;
+        overflow-x: visible;
+      }
+      .tabs .tab-btn{
+        width: 100%;
+        justify-content: center;
+        padding: 0.55rem 0.35rem;
+        font-size: 0.88rem;
+      }
+      .tabs .tab-btn:nth-child(1),
+      .tabs .tab-btn:nth-child(2),
+      .tabs .tab-btn:nth-child(3){
+        grid-column: span 2; /* 3 botões na 1ª linha */
+      }
+      .tabs .tab-btn:nth-child(4),
+      .tabs .tab-btn:nth-child(5){
+        grid-column: span 3; /* 2 botões na 2ª linha */
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -618,14 +671,21 @@
   </div>
 
   <div class="top-actions nav-row">
-    <button type="button" class="btn pill-btn" onclick="window.location.href='index.HTML'" title="Início">
+    <button type="button" class="btn pill-btn main" onclick="window.location.href='index.HTML'" title="Início">
       <span class="icon">🏠</span> Início
     </button>
-    <button id="btnBackupExport" class="btn pill-btn" type="button" title="Baixar um arquivo com seus dados">
+    <button id="btnBackupExport" class="btn pill-btn main" type="button" title="Baixar um arquivo com seus dados">
       <span class="icon">📤</span> Backup
     </button>
-    <button id="btnBackupImport" class="btn pill-btn" type="button" title="Restaurar dados a partir de um arquivo">
+    <button id="btnBackupImport" class="btn pill-btn main" type="button" title="Restaurar dados a partir de um arquivo">
       <span class="icon">📥</span> Restaurar
+    </button>
+
+    <button id="btnUpdateApp" class="btn pill-btn icon-only" type="button" title="Atualizar app" aria-label="Atualizar app">
+      <span class="icon">🔄</span>
+    </button>
+    <button id="btnInstallApp" class="btn pill-btn icon-only" type="button" title="Instalar app" aria-label="Instalar app" style="display:none">
+      <span class="icon">📲</span>
     </button>
     <input id="backupFile" type="file" accept="application/json" style="display:none" />
   </div>
@@ -648,8 +708,7 @@
   <div class="card">
     <div class="card-header">
       <h2>Sugestões de cardápio</h2>
-      <span class="badge">Ajuda a escolher a próxima refeição</span>
-    </div>
+</div>
 
     <p class="small" id="suggestContextText">
       Usando: Dia 1 (Seg) • 🍛 Almoço
@@ -827,8 +886,7 @@
       <div class="card">
         <div class="card-header">
           <h2>Opções do dia</h2>
-          <span class="badge">Monte o cardápio de até 14 dias</span>
-        </div>
+</div>
 
 <p class="small" id="diaIntroText">
           Monte o cardápio dos dias (1 a 14) escolhendo o tipo de refeição e adicionando as receitas.
@@ -914,8 +972,7 @@
       <div class="card">
         <div class="card-header">
           <h2>📊 Resumo das refeições</h2>
-          <span class="badge">Baseado nas refeições planejadas no ciclo</span>
-        </div>
+</div>
         <div id="statsResumoContent" class="stats-resumo">
           <!-- preenchido via JavaScript -->
         </div>
@@ -928,8 +985,7 @@
       <div class="card">
         <div class="card-header">
           <h2>Lista de compras</h2>
-          <span class="badge">Baseada em todas as receitas dos dias</span>
-        </div>
+</div>
 
         <div class="toolbar">
           <button class="btn primary" id="btnGerarLista">Gerar lista geral</button>
@@ -4347,6 +4403,76 @@ updateSuggestContextText();
   }
 
 
+
+
+  /* =========================
+     PWA — Instalar e Atualizar
+     ========================= */
+
+  // --- Instalar (Android/Chrome) ---
+  let deferredInstallPrompt = null;
+  const btnInstallApp = document.getElementById("btnInstallApp");
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    // impede o mini-infobar automático e guarda o evento para usar no botão
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    if (btnInstallApp) btnInstallApp.style.display = "inline-flex";
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    if (btnInstallApp) btnInstallApp.style.display = "none";
+  });
+
+  if (btnInstallApp) {
+    btnInstallApp.addEventListener("click", async () => {
+      if (!deferredInstallPrompt) return;
+      btnInstallApp.disabled = true;
+      deferredInstallPrompt.prompt();
+      try { await deferredInstallPrompt.userChoice; } catch(e) {}
+      deferredInstallPrompt = null;
+      btnInstallApp.style.display = "none";
+      btnInstallApp.disabled = false;
+    });
+  }
+
+  // --- Atualizar (força buscar versão nova + tenta atualizar SW) ---
+  const btnUpdateApp = document.getElementById("btnUpdateApp");
+
+  async function requestAppUpdate() {
+    // 1) tenta atualizar o Service Worker (se existir)
+    if ("serviceWorker" in navigator) {
+      try {
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (reg) {
+          await reg.update();
+          if (reg.waiting) {
+            // depende de sw.js ter o handler SKIP_WAITING (veja instruções abaixo)
+            reg.waiting.postMessage({ type: "SKIP_WAITING" });
+          }
+        }
+      } catch (err) {
+        console.log("Falha ao atualizar SW:", err);
+      }
+    }
+
+    // 2) recarrega com cache-bust para evitar conteúdo antigo
+    const u = new URL(location.href);
+    u.searchParams.set("v", String(Date.now()));
+    location.replace(u.toString());
+  }
+
+  if (btnUpdateApp) btnUpdateApp.addEventListener("click", requestAppUpdate);
+
+  // quando o SW novo assumir o controle, recarrega a página (evita ficar preso na versão antiga)
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (window.__reloadingOnSW) return;
+      window.__reloadingOnSW = true;
+      location.reload();
+    });
+  }
 
 </script>
 
