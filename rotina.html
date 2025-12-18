@@ -758,7 +758,17 @@
   overflow:hidden;
   text-overflow:ellipsis;
 }
+/* Ajuste cirúrgico: botões do card "Histórico de ciclos" não vazarem */
+#cardCycleHistory .card-header .flex{
+  gap: .25rem !important;
+  flex-wrap: wrap;
+}
 
+#cardCycleHistory .btn-small{
+  padding: .42rem .6rem;
+  font-size: .92rem;
+  white-space: nowrap;
+}
 </style>
 </head>
 
@@ -3353,7 +3363,7 @@ if (btnClearFlex) {
       );
       if(!ok) return;
 
-      if(!state.cycleHistory) state.cycleHistory = [];
+      if (!Array.isArray(state.cycleHistory)) state.cycleHistory = [];
 
       const snapshot = {
         timestamp: new Date().toISOString(),
