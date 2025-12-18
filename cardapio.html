@@ -3210,6 +3210,62 @@ copy.protein  = proteina;  // garante compatibilidade com o resto do app
     }
   }
 
+// ==== NORMALIZAÇÕES (evita travar loadState em versões antigas do backup) ====
+function normalizeWeeklyPlans() {
+  // garante array
+  if (!Array.isArray(state.weeklyPlans)) state.weeklyPlans = [];
+
+  // garante 14 dias e estrutura padrão
+  const ensureDay = (wp, i) => {
+    const safe = (wp && typeof wp === "object") ? wp : {};
+    return {
+      name: safe.name || ("Dia " + (i + 1)),
+      almoco: Array.isArray(safe.almoco) ? safe.almoco : [],
+      jantar: Array.isArray(safe.jantar) ? safe.jantar : [],
+      lanche: Array.isArray(safe.lanche) ? safe.lanche : [],
+      petisco: Array.isArray(safe.petisco) ? safe.petisco : []
+    };
+  };
+
+  state.weeklyPlans = state.weeklyPlans.map((wp, i) => ensureDay(wp, i));
+
+  while (state.weeklyPlans.length < 14) {
+    state.weeklyPlans.push(ensureDay({}, state.weeklyPlans.length));
+  }
+}
+
+function normalizeShoppingLists() {
+  if (!state.shoppingLists || typeof state.shoppingLists !== "object") {
+    state.shoppingLists = {};
+    return;
+  }
+
+  Object.keys(state.shoppingLists).forEach((k) => {
+    const obj = state.shoppingLists[k];
+    if (!obj || typeof obj !== "object") {
+      state.shoppingLists[k] = { blocks: [] };
+      return;
+    }
+    if (!Array.isArray(obj.blocks)) obj.blocks = [];
+
+    obj.blocks.forEach((b) => {
+      if (!b || typeof b !== "object") return;
+      if (!b.id) b.id = generateId();
+      if (!b.type) b.type = b.recipeId ? "recipe" : "custom";
+      if (!Array.isArray(b.items)) b.items = [];
+      b.items.forEach((it) => {
+        if (!it || typeof it !== "object") return;
+        if (!it.id) it.id = generateId();
+        if (typeof it.text !== "string") it.text = String(it.text ?? "");
+        it.checked = !!it.checked;
+      });
+    });
+
+    state.shoppingLists[k] = obj;
+  });
+}
+
+
     function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
