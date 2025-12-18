@@ -729,6 +729,22 @@
   overflow:hidden;
   text-overflow:ellipsis;
 }
+/* Evita botões vazando no "Histórico de ciclos" (mobile) */
+#cardCycleHistory .card-header .flex{
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+#cardCycleHistory .card-header .flex > button{
+  max-width: 100%;
+}
+
+@media (max-width: 420px){
+  #cardCycleHistory .btn-small{
+    padding: 0.2rem 0.45rem; /* ligeiramente menor */
+    font-size: 0.72rem;
+  }
+}
 
 </style>
 </head>
@@ -2453,7 +2469,7 @@ function summarizeCategoriasForCycle() {
           {id:"d7_8",label:"👕 Lavanderia", instrucao: "Roupa do dia a dia." }, 
           {id:"d7_9",label:"🧺 Triagem inbox 10’ ", instrucao: "Descartar/arquivar/ação rápida." }, 
           {id:"d7_10",label: "🔌 Organizar cabos/chargers", instrucao: ""}, 
-          {id:"d7_11",label:"🪑 Superfícies do escritório ", instrucao: "Organizar e guardar." }, ,
+          {id:"d7_11",label:"🪑 Superfícies do escritório ", instrucao: "Organizar e guardar." }, 
           {id:"d7_12",label:"🥘PRÉ-PREPARO", instrucao: "🥘Usar o que já foi cozido  • 🥣 Montar 1–2 potinhos extras (proteína + legume) para deixar a semana mais leve."}
         ]
       },
