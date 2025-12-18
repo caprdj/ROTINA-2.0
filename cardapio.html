@@ -807,8 +807,8 @@
           <option value="petisco">🍷 Petisco</option>
         
       <option value="salada">🥗 Saladas</option>
-      <option value="molho">🥣 Molhos</option>
-      <option value="tempero">🧂 Temperos</option>
+<option value="molho">🥣 Molhos</option>
+<option value="tempero">🧂 Temperos</option>
 </select>
 
 
@@ -3223,6 +3223,11 @@ function normalizeRecipes(rawRecipes) {
       if (raw) {
         const parsed = JSON.parse(raw);
         state.recipes = parsed.recipes || [];
+        // MIGRAÇÃO cirúrgica: versões antigas salvaram work no plural
+const fixWork = { saladas: "salada", molhos: "molho", temperos: "tempero" };
+state.recipes.forEach(r => {
+  if (r && fixWork[r.work]) r.work = fixWork[r.work];
+});
         state.weeklyPlans = parsed.weeklyPlans || [];
         state.selectedWeekIndex = parsed.selectedWeekIndex || 0;
         state.shoppingLists = parsed.shoppingLists || {};
@@ -3290,6 +3295,9 @@ function normalizeRecipes(rawRecipes) {
           return "🌒 Ceia";
         case "petisco":
           return "🍷 Petisco";
+          case "salada":   return "🥗 Saladas";
+case "molho":    return "🥣 Molhos";
+case "tempero":  return "🧂 Temperos";
         default:
           return work || "";
       }
