@@ -193,35 +193,6 @@
       display: none;
     }
 
-
-
-/* ✅ Lista de tarefas – ações à direita ( + ✏️ ⊘ ↺ ) */
-.tasks-item {
-  padding: 0.2rem 0.15rem;
-  border-radius: 10px;
-}
-.tasks-line{
-  display:flex;
-  align-items:flex-start;
-  gap:0.4rem;
-  width:100%;
-}
-.tasks-line .task-left{
-  flex:1;
-  min-width:0;
-  display:flex;
-  align-items:flex-start;
-  gap:0.35rem;
-}
-.tasks-line .task-actions{
-  margin-left:auto;
-  display:flex;
-  align-items:center;
-  gap:0.15rem;
-  flex-shrink:0;
-  white-space:nowrap;
-}
-
     input[type="checkbox"] {
       width: 15px;
       height: 15px;
@@ -883,7 +854,7 @@
       <div class="card-header flex-between">
         <h2>📚 Histórico de ciclos</h2>
         <div class="flex" style="gap: .4rem;">
-          <button type="button" class="btn-small btn-outline" id="btnRestartCycle" onclick="restartCycle()">
+          <button type="button" class="btn-small btn-outline" id="btnRestartCycle">
             🌀 Reiniciar ciclo
           </button>
           <button type="button" class="btn-small" id="btnDownloadCycleHistory">
@@ -1104,7 +1075,12 @@ if (btnDownloadHistory) {
       cycleHistory: []
     };
 
-    function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
+    function deepClone(obj){
+      if (obj === undefined) return undefined;
+      if (obj === null) return null;
+      try { return JSON.parse(JSON.stringify(obj)); }
+      catch(e){ return obj; }
+    }
 
     function normalizeContext(val){
       if(!val) return "casa";
@@ -2970,10 +2946,16 @@ if (ctx === "find") {
 
         const line = document.createElement("div");
         line.className = "tasks-line";
+    line.style.display = "flex";
+    line.style.alignItems = "flex-start";
+    line.style.gap = "0.4rem";
+    line.style.width = "100%";
 
         // ESQUERDA: checkbox + nome
         const left = document.createElement("div");
-      left.className = "task-left";
+        left.style.display = "flex";
+        left.style.alignItems = "center";
+        left.style.gap = "0.35rem";
 
         const chk = document.createElement("input");
         chk.type = "checkbox";
@@ -3013,7 +2995,10 @@ if (ctx === "find") {
 
         // DIREITA: botões +, ✏️, ⊘, ↺
         const right = document.createElement("div");
-        right.className = "task-actions";
+        right.style.display = "flex";
+        right.style.alignItems = "center";
+        right.style.gap = "0.25rem";
+        right.style.marginLeft = "auto";
 
         // Só mostra o + se houver instruções
         if (instrText) {
@@ -3120,10 +3105,16 @@ renderCycleHistoryBlock();
 
     const line = document.createElement("div");
     line.className = "tasks-line";
+    line.style.display = "flex";
+    line.style.alignItems = "flex-start";
+    line.style.gap = "0.4rem";
+    line.style.width = "100%";
 
     // Esquerda: checkbox + texto
     const left = document.createElement("div");
-      left.className = "task-left";
+    left.style.display = "flex";
+    left.style.alignItems = "center";
+    left.style.gap = "0.35rem";
     left.style.flex = "1";
 
     const chk = document.createElement("input");
@@ -3170,7 +3161,9 @@ label.textContent = item.name || item.nome || "Tarefa reagendada";
 
     // Direita: botão remover
     const actions = document.createElement("div");
-    actions.className = "task-actions";
+    actions.style.display = "flex";
+    actions.style.alignItems = "center";
+    actions.style.gap = "0.25rem";
 
     const btnDel = document.createElement("button");
     btnDel.type = "button";
@@ -3388,11 +3381,8 @@ if (btnClearFlex) {
       }
 
       persistState();
-
-      buildDaySelect();
-      daySelect.value = "1";
-      syncHeaderChips();
-      renderAll();
+      // garante atualização visual mesmo se algum elemento do DOM estiver diferente
+      location.reload();
     }
 
 function downloadHistory() {
@@ -3576,7 +3566,10 @@ function downloadCycleHistoryTxt(){
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }
-    // btnRestartCycle usa onclick no HTML (mais robusto no mobile)
+
+    if(btnRestartCycle){
+      btnRestartCycle.addEventListener("click", restartCycle);
+    }
     if(btnDownloadCycleHistory){
       btnDownloadCycleHistory.addEventListener("click", downloadCycleHistoryTxt);
     }
