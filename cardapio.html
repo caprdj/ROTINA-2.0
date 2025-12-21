@@ -6,19 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#2d7a5b" />
   <style>
-    :root {
-  --bg: #f4f6fb;                 /* fundo geral */
-  --card-bg: #ffffff;            /* cards */
-  --primary: #5b7cfa;            /* azul principal */
-  --primary-soft: #eef2ff;       /* azul claro (pills) */
-  --secondary: #9aa5ff;          /* azul secundário */
-  --accent: #7dd3c7;             /* detalhes leves */
-  --text-main: #1f2937;          /* texto principal */
-  --text-muted: #6b7280;         /* texto secundário */
-  --border: #e5e7eb;             /* bordas suaves */
-  --danger: #ef4444;             /* ações destrutivas */
-  --radius: 18px;                /* arredondamento */
-    --shadow: 0 6px 18px rgba(0,0,0,.08);
+    :root{
+      --bg:#f5f5fa;
+      --card:#ffffff;
+      --primary:#4b7bec;
+      --primary-soft:#20bf6b;
+      --border:#ddd;
+      --text:#222;
+      --muted:#666;
+      --danger:#eb3b5a;
+      --pill:#eef2ff;
+      --radius:14px;
+      --shadow: 0 6px 18px rgba(0,0,0,.08);
       --font: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       --base:17px;
     }
@@ -138,6 +137,113 @@
   cursor:pointer;
 }
 .chip.danger{ border-color:rgba(192,57,43,.35); background:rgba(192,57,43,.10); color:var(--danger); }
+
+
+/* =========================
+   THEME (igual ao app Exercícios/Rotina)
+   Inserido automaticamente
+========================= */
+:root{
+  --bg:#f4f6fb;
+  --card-bg:#ffffff;
+  --primary:#5b7cfa;
+  --primary-soft:#eef2ff;
+  --secondary:#9aa5ff;
+  --accent:#7dd3c7;
+  --text-main:#1f2937;
+  --text-muted:#6b7280;
+  --border:#e5e7eb;
+  --danger:#ef4444;
+  --radius:18px;
+}
+
+/* Fundo + tipografia base */
+body{
+  background: var(--bg) !important;
+  color: var(--text-main) !important;
+}
+
+/* Cards (fallback para classes comuns) */
+.card,
+.panel,
+.section,
+.recipe-card,
+.item-card,
+.box{
+  background: var(--card-bg) !important;
+  border-radius: var(--radius) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,.06) !important;
+}
+
+/* “Pills” e botões segmentados */
+.pill,
+.chip,
+.tab-pill,
+.segment,
+.seg-btn,
+.toolbar button{
+  border-radius: 999px !important;
+}
+
+/* Pills padrão */
+.pill,
+.chip{
+  background: var(--primary-soft) !important;
+  color: var(--primary) !important;
+  border: 1px solid rgba(91,124,250,.18) !important;
+  font-weight: 600 !important;
+}
+
+/* Estado ativo (variações mais comuns) */
+.pill.active,
+.chip.active,
+.tab-pill.active,
+.segment .active,
+.seg-btn.active,
+button.active{
+  background: var(--primary) !important;
+  color: #fff !important;
+  border-color: rgba(91,124,250,.35) !important;
+  box-shadow: 0 8px 18px rgba(91,124,250,.28) !important;
+}
+
+/* Botão primário (se o HTML usar classes típicas) */
+button.primary,
+.btn-primary,
+.primary-btn{
+  background: var(--primary) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 999px !important;
+  padding: 12px 18px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 8px 18px rgba(91,124,250,.35) !important;
+}
+
+/* Inputs mais suaves */
+input, select, textarea{
+  border: 1px solid var(--border) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  color: var(--text-main) !important;
+}
+
+/* Textos secundários */
+.muted, .hint, small, .sub, .subtext{
+  color: var(--text-muted) !important;
+}
+
+/* Separadores */
+hr{
+  border: none !important;
+  border-top: 1px solid var(--border) !important;
+}
+
+/* Ícones/botões destrutivos */
+.danger, .btn-danger, .delete{
+  color: var(--danger) !important;
+}
 
 </style>
 </head>
