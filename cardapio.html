@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Cardápio — v18</title>
+  <title> Cardápio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#2d7a5b" />
   <style>
@@ -146,13 +146,13 @@
       <div class="brand">
         <div class="dot"></div>
         <h1>Cardápio</h1>
-        <div class="small">v15 • receitas 1–40</div>
+        <div class="small">  </div>
         <div class="spacer"></div>
-        <a class="btn soft" href="https://caprdj.github.io/ROTINA-2.0/" title="Voltar para Rotina 2.0">🏠 Início</a>
+        <a class="btn soft" href="https://caprdj.github.io/ROTINA-2.0/" title="Voltar para Rotina 2.0">🏠</a>
       </div>
       <div class="tabs">
         <button class="tabbtn active" data-tab="filter">✨ Filtro</button>
-        <button class="tabbtn" data-tab="day">🗓️ Dia</button>
+        <button class="tabbtn" data-tab="day">🗓️</button>
         <button class="tabbtn" data-tab="shop">🛒 Lista de compras</button>
       </div>
     </div>
@@ -164,7 +164,7 @@
       <div class="grid two">
         <div class="card">
           <h3 style="margin:0 0 6px 0">Filtrar receitas</h3>
-          <div class="hint">Use “Mostrar tudo” para ver todas. Depois aplique filtros por proteína, tipo, refeição e busca.</div>
+          <div class="hint">♡</div>
 
           <label>Proteína</label>
           <select id="f-protein"></select>
@@ -265,7 +265,7 @@
           <select id="nr-protein"></select>
 
           <label>Ingredientes (um por linha)</label>
-          <textarea id="nr-ingredients" placeholder="Ex:\nfrango\ncebola\nalho"></textarea>
+          <textarea id="nr-ingredients" placeholder="Ex:frango, cebola, alho"></textarea>
         </div>
         <div>
           <label>Modo de preparo</label>
@@ -341,10 +341,10 @@
 <script>
 
 /* =========================
-   Cardápio v17 — base estável
+   Cardápio v34 — base estável
 ========================= */
 
-const STORAGE_KEY = "CARDAPIO_STATE_V15";
+const STORAGE_KEY = "CARDAPIO_STATE_V34";
 
 /** Catalogs */
 const PROTEINS = [
@@ -2545,8 +2545,8 @@ function renderDay(){
           <h4 style="margin:0">${s.emoji} ${s.label}</h4>
           <button class="pill" data-add-slot="${s.key}">+ Adicionar</button>
         </div>
-        <div class="hint" style="margin:8px 0 0 0">${ids.length ? `${ids.length} item(ns)` : "Vazio"}</div>
-        <div class="mini-list" data-slot="${s.key}">${itemsHTML || `<div class="hint" style="margin:10px 0 0 0">Toque em “+ Adicionar” para escolher uma receita.</div>`}</div>
+        <div class="hint" style="margin:8px 0 0 0">${ids.length ? `${ids.length} item(ns)` : "-"}</div>
+        <div class="mini-list" data-slot="${s.key}">${itemsHTML || `<div class="hint" style="margin:10px 0 0 0"></div>`}</div>
       </div>
     `;
   }).join("");
