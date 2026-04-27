@@ -68,10 +68,17 @@
     .list{display:grid;gap:10px;margin-top:10px}
     .item{
       border:1px solid var(--border);border-radius:14px;padding:12px;
-      display:flex;gap:10px;align-items:flex-start;justify-content:space-between;
+      display:block;
       background:#fff
     }
     .item .meta{flex:1}
+    .item .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:flex-end;
+      margin-top:10px;
+    }
     .item .title{font-weight:800;margin:0 0 6px}
     .badge{display:inline-flex;gap:6px;align-items:center;
       background:var(--primary-soft);border:1px solid #cde8dc;color:#1b5a43;
@@ -2287,6 +2294,34 @@ function filteredRecipes(filters){
 }
 
 /** Render recipe cards */
+function splitInstructionSteps(text=""){
+  const raw = String(text || "").trim();
+  if(!raw) return [];
+
+  // Prioriza quebras de linha quando já existem passos separados no texto.
+  const byLine = raw.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  if(byLine.length > 1){
+    return byLine.map(step => step.replace(/^\d+[\)\.\-:]\s*/, "").trim()).filter(Boolean);
+  }
+
+  // Fallback para textos em parágrafo único com marcação "1) ... 2) ..."
+  const byNumber = raw
+    .split(/(?:^|\s+)\d+[\)\.\-:]\s+/)
+    .map(s=>s.trim())
+    .filter(Boolean);
+  return byNumber.length > 1 ? byNumber : [raw];
+}
+
+function isNoteText(text=""){
+  return /^\s*(#|obs[:\-]|observa[cç][aã]o[:\-]|nota[:\-])/i.test(String(text || ""));
+}
+
+function cleanNoteText(text=""){
+  return String(text || "")
+    .replace(/^\s*(#|obs[:\-]|observa[cç][aã]o[:\-]|nota[:\-])\s*/i, "")
+    .trim();
+}
+
 function recipeCard(r, opts={}){
   const protein = labelFrom(PROTEINS, r.protein);
   const kind = labelFrom(KINDS, r.kind);
@@ -2298,6 +2333,22 @@ function recipeCard(r, opts={}){
   const delBtn = opts.onDelete ? `<button class="btn danger" data-del="${escapeHtml(r.id)}">🗑️ Excluir</button>` : "";
   const editBtn = opts.onEdit ? `<button class="btn" data-edit="${escapeHtml(r.id)}">✏️ Editar</button>` : "";
   const favBtn = `<span class="fav" data-fav="${escapeHtml(r.id)}" title="Favorito">${star}</span>`;
+  const ingredients = (r.ingredients || []).map(item => {
+    if(isNoteText(item)){
+      return `<li style="list-style:none;margin-left:-18px"><em>📝 ${escapeHtml(cleanNoteText(item) || item)}</em></li>`;
+    }
+    return `<li>${escapeHtml(item)}</li>`;
+  }).join("");
+  const instructionSteps = splitInstructionSteps(r.instructions || "");
+  const instructions = instructionSteps
+    .filter(step => !isNoteText(step))
+    .map(step => `<li>${escapeHtml(step)}</li>`)
+    .join("");
+  const instructionNotes = instructionSteps
+    .filter(isNoteText)
+    .map(note => `<div style="margin-top:6px"><em>📝 ${escapeHtml(cleanNoteText(note) || note)}</em></div>`)
+    .join("");
+  const onlyNotesInInstructions = instructionSteps.length > 0 && instructionSteps.every(isNoteText);
 
   return `
     <div class="item">
@@ -2312,15 +2363,18 @@ function recipeCard(r, opts={}){
           ${favBtn}
         </div>
         <div class="small" style="margin-top:8px">
-          <strong>Ingredientes:</strong> ${escapeHtml((r.ingredients||[]).join(", "))}
+          <strong>Ingredientes:</strong>
+          <ul style="margin:6px 0 0 18px;padding:0">${ingredients}</ul>
         </div>
         <div class="small" style="margin-top:6px">
-          <strong>Modo:</strong> ${escapeHtml(r.instructions||"")}
+          <strong>Modo:</strong>
+          ${onlyNotesInInstructions ? "" : `<ol style="margin:6px 0 0 18px;padding:0">${instructions}</ol>`}
+          ${instructionNotes}
         </div>
         ${photo}
         ${link}
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px;min-width:140px;align-items:flex-end">
+      <div class="actions">
         ${addBtn}
         ${editBtn}
         ${delBtn}
